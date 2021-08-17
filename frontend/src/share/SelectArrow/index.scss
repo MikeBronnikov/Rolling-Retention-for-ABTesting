@@ -1,0 +1,76 @@
+$easing: cubic-bezier(.25,1.7,.35,.8);
+$duration: 1.2s;
+$height: 1.9px;
+$width: 15px;
+.arrow-icon {
+  height: .4em;
+  width: 1em;
+  margin-top: 27px; //!
+  padding: 0.5em;
+  position: relative;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.left-bar {
+  position: absolute;
+  background-color: transparent;
+  top: 0;
+  left: 0;
+  width: $width;
+  height: $height;
+  display: block;
+  transform: rotate(25deg);
+  float: right;
+  border-radius: 2px;
+  
+  &:after {
+    content:"";
+    background-color: #5D6D97;
+    width: $width;
+    height: $height;
+    display: block;
+    float: right;
+    border-radius: 6px 10px 10px 6px;
+    transition: all $duration $easing;
+    z-index: -1;
+  }
+}
+
+.right-bar {
+  position: absolute;
+  background-color: transparent;
+  top: 0px;
+  left: 11px; // if it is crossing!
+  width: $width;
+  height: $height;
+  display: block;
+  transform: rotate(-25deg);
+  float: right;
+  border-radius: 2px;
+  &:after {
+    content:"";
+    background-color: #5D6D97;
+    width: $width;
+    height: $height;
+    display: block;
+    float: right;
+    border-radius: 10px 6px 6px 10px;
+    transition: all $duration $easing;
+    z-index: -1;
+  }
+}
+
+.open {
+    .left-bar:after {
+    transform-origin: center center;
+    transform: rotate(-70deg);
+  }
+  .right-bar:after {
+    transform-origin: center center;
+    transform: rotate(70deg);
+  }
+
+}
+
+
