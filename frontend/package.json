@@ -1,6 +1,10 @@
 {
-  "name": "frontend",
+  "name": "my-app",
   "version": "0.1.0",
+  "engines": {
+    "node": "14.15.0",
+    "npm": "7.19.1"
+  },
   "private": true,
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
@@ -11,6 +15,7 @@
     "axios": "^0.21.1",
     "react": "^17.0.2",
     "react-chartjs-2": "^3.0.4",
+    "react-date-picker": "^8.3.2",
     "react-dom": "^17.0.2",
     "react-input-mask": "^2.0.4",
     "react-redux": "^7.2.4",
@@ -43,10 +48,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.17",
-    "@types/react-input-mask": "^3.0.1",
-    "@types/react-select": "^4.0.17"
   }
 }

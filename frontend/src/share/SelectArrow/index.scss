@@ -20,7 +20,7 @@ $width: 15px;
   width: $width;
   height: $height;
   display: block;
-  transform: rotate(25deg);
+  transform: rotate(40deg);
   float: right;
   border-radius: 2px;
   
@@ -41,11 +41,11 @@ $width: 15px;
   position: absolute;
   background-color: transparent;
   top: 0px;
-  left: 11px; // if it is crossing!
+  left: 10px; // if it is crossing!
   width: $width;
   height: $height;
   display: block;
-  transform: rotate(-25deg);
+  transform: rotate(-40deg);
   float: right;
   border-radius: 2px;
   &:after {
@@ -64,11 +64,11 @@ $width: 15px;
 .open {
     .left-bar:after {
     transform-origin: center center;
-    transform: rotate(-70deg);
+    transform: rotate(-73deg);
   }
   .right-bar:after {
     transform-origin: center center;
-    transform: rotate(70deg);
+    transform: rotate(73deg);
   }
 
 }

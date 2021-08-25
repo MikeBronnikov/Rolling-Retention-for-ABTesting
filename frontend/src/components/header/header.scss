@@ -11,6 +11,7 @@
    justify-content: space-between;
    background: #F9F9F9;
    padding-right: 41px; //to be in media 
+   box-shadow: 4px 0px 10px rgba(93, 109, 151, 0.1);
    &__wrap{
     display: flex;
     align-items: center;
@@ -22,6 +23,7 @@
        font-size: 20px;
        cursor: pointer;
        margin: 18px 50px 17px 23px; // to be in media when resize
+       color: #5D6E97;
    }
    &__search{
     display: flex;

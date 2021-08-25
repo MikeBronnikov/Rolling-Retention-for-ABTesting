@@ -4,11 +4,12 @@ import { payloadType } from '../types'
 class _DataService {
     async getData() {
         let _data = await db.query('SELECT * FROM person')
+        console.log(_data)
         let data = _data.rows
         let numerator = 0 //количество пользователей, вернувшихся в систему в X-ый день или позже
         let denominator = 0 // (количество пользователей, установивших приложение 7 дней назад или раньше
         let result = null
-        let liveTime: any = {} //! any
+        let liveTime: any = {}
         data.forEach(element => {
             const reg = element.date_registration
             const activ = element.date_last_activity
@@ -23,10 +24,6 @@ class _DataService {
             liveTime[element.id] = ((activ - reg ) / 86400000)
         })
         result = ((numerator * 100) / denominator).toFixed(2)
-        // console.log(numerator, denominator)
-        // console.log(lives)
-         
-        // console.log(result + '%')
         return {liveTime, result}
     }
    async setData(body: any){

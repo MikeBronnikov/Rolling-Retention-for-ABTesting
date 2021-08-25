@@ -5,5 +5,5 @@ export interface dataSendingObj  {
 }
 
 export interface LiveTime {
-    id: string
+    id?: string | number
 }

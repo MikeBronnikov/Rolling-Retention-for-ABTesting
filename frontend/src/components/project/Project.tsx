@@ -1,9 +1,14 @@
-import React, { FocusEventHandler, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDataThunk, sendDataThunk } from "../../redux/dataSlice";
 import { RootState } from "../../redux/store";
 import { dataSendingObj } from "../../Types";
 import "./project.scss";
+
+import plus from "../../assets/images/plus.svg";
+import cross from "../../assets/images/cross.svg";
+import loader from "../../assets/images/loader.svg";
+
 import { Result } from "./Result";
 
 export const Project = () => {
@@ -12,16 +17,16 @@ export const Project = () => {
   const [numOfRows, setnumOfRows] = useState(3);
   const [rowValues, setrowValues] = useState<Array<dataSendingObj>>([]);
   const [isFirstSaveAttempt, setisFirstSaveAttempt] = useState(false);
-
-  const resultedData = useSelector(
-    (state: RootState) => state.dataReducer.data
-  );
+  const numOfRowsArray = [...Array(numOfRows)];
+    const resultedData = useSelector((state: RootState) => state.dataReducer.data);
+    const fetchingList = useSelector((state: RootState) => state.dataReducer.fetchingList);
 
   const increaseNum = () => {
     setnumOfRows(numOfRows + 1);
   };
   const dicreaseNum = () => {
     setnumOfRows(numOfRows - 1);
+    setrowValues((prev) => prev.slice(0, prev.length-1))
   };
   const handleBlur = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -32,7 +37,10 @@ export const Project = () => {
     if (alreadyExistedObj) {
       let rewrittenObj = {
         ...alreadyExistedObj,
-        [keyName]: event.target.value,
+        [keyName]:
+          Date.now() > Date.parse(event.target.value) && Date.parse(event.target.value) >= Date.parse(alreadyExistedObj.registrationDate ?? '0')
+            ? event.target.value
+            : "error",
       };
       let newList = rowValues.map((i) =>
         i.id === rewrittenObj.id ? rewrittenObj : i
@@ -41,7 +49,13 @@ export const Project = () => {
     } else {
       setrowValues((prev) => [
         ...prev,
-        { [keyName]: event.target.value, id: index + 1 },
+        {
+          [keyName]:
+            Date.now() > Date.parse(event.target.value)
+              ? event.target.value
+              : "error",
+          id: index + 1,
+        },
       ]);
     }
   };
@@ -56,22 +70,31 @@ export const Project = () => {
   };
   return (
     <div className="project-wrapper">
-      <form className="project" onSubmit={handleSubmit}>
+      <form className="project"  onSubmit={handleSubmit}>
         <p className="project__title">Current</p>
 
         <div className="project__table">
           <table className="project__table-inner" cellPadding="10">
             <tbody>
               <tr>
-                <th>№</th>
+                <th>UserID</th>
                 <th>Date Registration</th>
                 <th>Date Last Activity</th>
               </tr>
-              {[...Array(numOfRows)].map((_, index) => (
+              {numOfRowsArray.map((_, index) => (
                 <tr key={index}>
-                  <td>{index + 1}</td>
+                  <td className="project__table-input">{index + 1}</td>
                   <td>
                     <input
+                        className={`project__table-input ${
+                          rowValues.find(
+                            (elem) =>
+                              elem.id === index + 1 &&
+                              elem.registrationDate === "error"
+                          )
+                            ? "error"
+                            : ""
+                        } `}
                       onBlur={(event) => {
                         handleBlur(event, index, "registrationDate");
                       }}
@@ -81,7 +104,16 @@ export const Project = () => {
                   </td>
                   <td>
                     <input
-                      max="17-08-2021"
+                      className={`project__table-input ${
+                        rowValues.find(
+                          (elem) =>
+                            elem.id === index + 1 &&
+                            elem.activityDate === "error"
+                        )
+                          ? "error"
+                          : ""
+                      } `}
+                      max="2021-08-24"
                       onBlur={(event) => {
                         handleBlur(event, index, "activityDate");
                       }}
@@ -89,48 +121,52 @@ export const Project = () => {
                       type="date"
                     />
                   </td>
+                      
+                  {index === numOfRowsArray.length - 1 && (
+                    <button
+                      className="project__table-cross"
+                      onClick={dicreaseNum}
+                      disabled={numOfRows <= 1}
+                      type="button"
+                    >
+                      <img src={cross} alt="cross!" />
+                    </button>
+                  )}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+        <button
+          className="project__controls-btn"
+          onClick={increaseNum}
+          disabled={numOfRows >= 6}
+          type="button"
+        >
+          <img src={plus} alt="plus" /> add one more
+        </button>
         <div className="project__contols">
-          <button
-            className="project__controls-btn"
-            onClick={increaseNum}
-            disabled={numOfRows >= 6}
-            type="button"
-          >
-            add row
-          </button>
-          <button
-            className="project__controls-btn"
-            onClick={dicreaseNum}
-            disabled={numOfRows <= 1}
-            type="button"
-          >
-            delete row
-          </button>
           <div>
             <button
               type="submit"
               disabled={
-                rowValues.find((i) => Object.keys(i).length == 3) ? false : true
+                rowValues.find((i) => Object.keys(i).length === 3) ?  rowValues.find((i) => i.activityDate == 'error' || i.registrationDate === 'error')? true: false : true
               }
               className="project__controls-btn project__controls-btn-general"
             >
-              Save table
+              {fetchingList.some(elem => elem === 'saving') ? <img src={loader} alt="loader" /> : 'Save table'}
             </button>
             <button
               className="project__controls-btn project__controls-btn-general"
               onClick={handleCalculateClick}
-              disabled={!isFirstSaveAttempt}
+              disabled={!isFirstSaveAttempt || fetchingList.some(elem => elem === 'saving')}
             >
-              Calculate
+               {fetchingList.some(elem => elem === 'calculating') ? <img src={loader} alt="loader" /> : 'Calculate'}
             </button>
           </div>
         </div>
       </form>
+
       {resultedData && <Result resultedData={resultedData} />}
     </div>
   );

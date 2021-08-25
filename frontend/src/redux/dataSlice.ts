@@ -6,11 +6,18 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 export const dataSlice = createSlice({
     name: "data",
     initialState: {
-      data: null as null | {result: number,liveTime: LiveTime } 
+      data: null as null | {result: number,liveTime: LiveTime },
+      fetchingList: [] as Array<'saving' | 'calculating'>
     },
     reducers: {
       setData: (state, action: PayloadAction<any>) => { 
         state.data = action.payload;
+      },
+      setFetching: (state, action: PayloadAction<'saving' | 'calculating'>) => { 
+        state.fetchingList = [...state.fetchingList, action.payload];
+      },
+      deleteFetching: (state, action: PayloadAction<'saving' | 'calculating'>) => { 
+        state.fetchingList = state.fetchingList.filter(elem => elem !== action.payload);
       },
     },
   });
@@ -19,11 +26,10 @@ export const dataSlice = createSlice({
     "fetchData",
     async (params,  { dispatch }) => {
       try {
-        console.log('in thunk')
+        dispatch(setFetching('calculating'))
         const response = await dataAPI.getData()
-        console.log('thunk!!!!')
-        console.log(response)
-          dispatch(setData(response));
+        dispatch(setData(response));
+        dispatch(deleteFetching('calculating'))
         
       } catch (error) {
         console.error(error)
@@ -35,20 +41,16 @@ export const dataSlice = createSlice({
     "sendData",
     async (item: dataSendingObj[],  { dispatch }) => {
       try {
-        console.log('in send thunk')
-        console.log(item)
+        dispatch(setFetching('saving'))
         const response = await dataAPI.sendData(item)
-        // console.log('thunk!!!!')
-        console.log(response)
-        //   dispatch(setData(response));
-        
+        dispatch(deleteFetching('saving'))
       } catch (error) {
         console.error(error)
       }
     }
   )
   // Action creators are generated for each case reducer function
-  export const { setData } = dataSlice.actions;
+  export const { setData, setFetching, deleteFetching } = dataSlice.actions;
   
   export default dataSlice.reducer;
   
